@@ -34,7 +34,6 @@ function rounds(array, amountOfStudents, groupSize) {
     return result;
 }
 
-
 function shiftDown(array, column, n) {
     let temp = getColumn(array, column);
     for (let i = 0; i < n; i++) {
