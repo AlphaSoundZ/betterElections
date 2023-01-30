@@ -134,7 +134,7 @@ function validate(e) {
             tbody.appendChild(tr);
             for (let k = 0; k < groupSize; k++) {
                 let td = document.createElement("td");
-                td.innerHTML = answer[i][j][k];
+                td.innerHTML = answer[i][k][j];
                 tr.appendChild(td);
             }
         }
