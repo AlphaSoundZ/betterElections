@@ -1,12 +1,6 @@
 let result = document.getElementById("result");
-let groupSize = 6;
-let amountOfStudents = 25;
-let wishedAmountOfRounds = null;
 let defaultArray;
 let answer = [];
-
-// round up to the nearest multiple of groupSize
-amountOfStudents = Math.ceil(amountOfStudents / groupSize) * groupSize;
 
 let amountOfGroups = amountOfStudents / groupSize;
 
@@ -20,9 +14,6 @@ function rounds(array, amountOfStudents, groupSize) {
     result.push(fullCopy(defaultArray));
 
     amountOfGroups = amountOfStudents / groupSize;
-
-    if (wishedAmountOfRounds != null && wishedAmountOfRounds < amountOfGroups)
-        amountOfGroups = wishedAmountOfRounds;
     
     for (let i = 0; i < amountOfGroups-1; i++) { // iterate through rounds
         for (let j = 1; j < groupSize; j++) { // iterate through columns
@@ -59,6 +50,10 @@ function createArray(amountOfStudents, groupSize) {
             student++;
         }
     }
+
+    // shuffle
+    shuffleArray(result);
+    
     return result;
 }
 
@@ -82,16 +77,21 @@ function validate(e) {
 
     amountOfStudents = document.getElementById("amountOfStudents").value;
     groupSize = document.getElementById("groupSize").value;
-    wishedAmountOfRounds = (document.getElementById("amountOfRounds").value == "") ? null : document.getElementById("amountOfRounds").value;
+    let radioButton = document.getElementById("size").checked;
 
-    let students = [];
-    for (let i = 1; i <= amountOfStudents; i++) {
-        students.push(i);
-    }
+    // round up to the nearest multiple of groupSize
+    let wishedAmountsOfStudents = amountOfStudents;
+    amountOfStudents = Math.ceil(amountOfStudents / groupSize) * groupSize;
 
+    // convert amount of groups to groupSize
+    if (radioButton)
+        groupSize = amountOfStudents / groupSize;
+    
     defaultArray = createArray(amountOfStudents, groupSize);
 
     answer = rounds(fullCopy(defaultArray), amountOfStudents, groupSize);
+
+    console.log(answer);
     
     result = document.getElementById("result");
     // delete all children of result
@@ -129,12 +129,16 @@ function validate(e) {
         let tbody = document.createElement("tbody");
         table.appendChild(tbody);
 
-        for (let j = 0; j < answer[i].length; j++) {
+        for (let j = 0; j < amountOfGroups; j++) { // rows
             let tr = document.createElement("tr");
             tbody.appendChild(tr);
-            for (let k = 0; k < groupSize; k++) {
+            for (let k = 0; k < groupSize; k++) { // field in row
+                if (answer[i][j][k] > wishedAmountsOfStudents)
+                    continue;
+                    
                 let td = document.createElement("td");
-                td.innerHTML = answer[i][k][j];
+                td.innerHTML = answer[i][j][k];
+                
                 tr.appendChild(td);
             }
         }
@@ -145,3 +149,21 @@ function validate(e) {
         result.appendChild(style);
     }
 }
+
+function shuffleArray(array) {
+    let currentIndex = array.length,  randomIndex;
+  
+    // While there remain elements to shuffle.
+    while (currentIndex != 0) {
+  
+      // Pick a remaining element.
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+  
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+  
+    return array;
+  }

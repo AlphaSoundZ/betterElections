@@ -9,9 +9,10 @@
 <body>
     <form action="" onsubmit="validate(event);">
         <input type="number" min="4" placeholder="Personenanzahl" id="amountOfStudents" required><br>
-        <input type="number" min="1" placeholder="Gruppengröße" id="groupSize" required><br>
-        <input type="number" min="1" placeholder="Runden (nicht erforderlich)" id="amountOfRounds"><br><br>
-
+        <input type="number" min="1" placeholder="Gruppenanzahl/Gruppengröße" id="groupSize" required><br>
+        <input type="radio" class="radio" name="switch" id="size" required><label for="size">Gruppengröße</label><br>
+        <input type="radio" class="radio" name="switch" id="amount"><label for="amount">Gruppenanzahl</label>
+        <br>
         <button type="submit">Calculate</button>
     </form>
 
@@ -23,5 +24,11 @@
 <style>
     input {
         width: 200px;
+        left: 0;
+        margin-bottom: 10px;
+    }
+
+    .radio {
+        width: 50px;
     }
 </style>
