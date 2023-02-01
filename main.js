@@ -120,7 +120,7 @@ function validate(e) {
         let tr = document.createElement("tr");
         thead.appendChild(tr);
 
-        for (let j = 0; j < groupSize; j++) {
+        for (let j = 0; j < amountOfGroups; j++) {
             let th = document.createElement("th");
             th.innerHTML = "Group " + (j+1);
             tr.appendChild(th);
@@ -129,15 +129,17 @@ function validate(e) {
         let tbody = document.createElement("tbody");
         table.appendChild(tbody);
 
-        for (let j = 0; j < amountOfGroups; j++) { // rows
+        for (let j = 0; j < groupSize; j++) { // row
             let tr = document.createElement("tr");
             tbody.appendChild(tr);
-            for (let k = 0; k < groupSize; k++) { // field in row
-                if (answer[i][j][k] > wishedAmountsOfStudents)
-                    continue;
-                    
+            for (let k = 0; k < amountOfGroups; k++) { // column
                 let td = document.createElement("td");
-                td.innerHTML = answer[i][j][k];
+                if (answer[i][k][j] > wishedAmountsOfStudents)
+                {
+                    continue;
+                }    
+                    
+                td.innerHTML = answer[i][k][j];
                 
                 tr.appendChild(td);
             }
