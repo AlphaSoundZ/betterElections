@@ -77,7 +77,7 @@ function validate(e) {
 
     amountOfStudents = document.getElementById("amountOfStudents").value;
     groupSize = document.getElementById("groupSize").value;
-    let radioButton = document.getElementById("size").checked;
+    let radioButton = document.getElementById("amount").checked;
 
     // round up to the nearest multiple of groupSize
     let wishedAmountsOfStudents = amountOfStudents;
