@@ -222,8 +222,14 @@ function addVote(e) {
     document.getElementById("primary_wish").value = "---";
     document.getElementById("secondary_wish").value = "---";
 
+    // add to electionResults
     electionResults.push({ name: name, choice: [primary, secondary] });
     notYetAssigned.push(electionResults.length - 1);
+
+    // add to div "voters"
+    let div = document.createElement("div");
+    div.innerHTML = name + ": " + primary + ", " + secondary;
+    document.getElementById("voters").appendChild(div);
 
     console.log(electionResults);
 }
