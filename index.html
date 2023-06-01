@@ -4,12 +4,22 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculate Groups</title>
+    <title>Better Elections!</title>
 </head>
 <body>
-    <form action="" onsubmit="validate(event);">
-        <button type="submit">Calculate</button>
+    <form action="" onsubmit="addVote(event);">
+        <input type="text" name="name" placeholder="Name" id="name" required>
+        <select id="primary_wish" name="primary_wish" required>
+            <option disabled selected value="---">Primary Wish</option>
+        </select>
+        <select id="secondary_wish" name="secondary_wish">
+            <option value="---" selected>Secondary Wish</option>
+        </select>
+        <button type="submit">Add Voter</button>
+
+        <br><br>
     </form>
+    <button type="submit" onclick="validate()">Calculate</button>
 
     <div id="result"></div>
 

@@ -6,12 +6,6 @@ let maxOptionSize = 2;
 let alreadyChecked = [];
 
 let electionResults = [
-    { name: "Bob", choice: ["A", "B"] },
-    { name: "Jake", choice: ["A", "B"] },
-    { name: "Lisa", choice: ["A", "C"] },
-    { name: "John", choice: ["C", "A"] },
-    { name: "Mary", choice: ["B", "C"] },
-    { name: "Mike", choice: ["A", "C"] },
 ]
 
 // every index from electionResults
@@ -23,10 +17,26 @@ let assigned = [
 
 let unluckyPersons = [];
 
-validate()
+// #################################
+
+// add options to select
+let primary_wish = document.getElementById("primary_wish");
+let secondary_wish = document.getElementById("secondary_wish");
+
+for (let i = 0; i < options.length; i++) {
+    let option = document.createElement("option");
+    option.text = options[i].name;
+    primary_wish.add(option);
+
+    let option2 = document.createElement("option");
+    option2.text = options[i].name;
+    secondary_wish.add(option2);
+}
+
+
+// #################################
 
 function validate() {
-    //e.preventDefault();
 
     while (notYetAssigned.length > 0)
     {
@@ -176,4 +186,44 @@ function checkChoices (PersonChoice) {
     };
 
     return false;
+}
+
+
+function addVote(e) {
+    e.preventDefault();
+    
+    let name = document.getElementById("name").value;
+    let primary = document.getElementById("primary_wish").value;
+    let secondary = document.getElementById("secondary_wish").value;
+
+    // check if name already exists
+    if (electionResults.find(x => x.name == name))
+    {
+        alert("Name already exists!");
+        return;
+    }
+
+    // check if secondary wish is already in primary wish
+    if (primary == secondary)
+    {
+        alert("Secondary wish is already in primary wish!");
+        return;
+    }
+
+    // check if primary wish has selection
+    if (primary == "---" || secondary == "---")
+    {
+        alert("Please select wishes!");
+        return;
+    }
+
+    // clear input fields
+    document.getElementById("name").value = "";
+    document.getElementById("primary_wish").value = "---";
+    document.getElementById("secondary_wish").value = "---";
+
+    electionResults.push({ name: name, choice: [primary, secondary] });
+    notYetAssigned.push(electionResults.length - 1);
+
+    console.log(electionResults);
 }
