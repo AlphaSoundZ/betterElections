@@ -6,14 +6,28 @@ let maxOptionSize = 2;
 let alreadyChecked = [];
 
 let electionResults = [
+    // example data with two choices from a to d
+    {name: "John", choice: ["A", "A"]},
+    {name: "Jane", choice: ["A", "A"]},
+    {name: "Max", choice: ["C", "D"]},
+    {name: "Mia", choice: ["D", "B"]},
+    {name: "Tom", choice: ["A", "B"]},
+    {name: "Liz", choice: ["B", "A"]},
+    {name: "Tim", choice: ["C", "A"]},
+    {name: "Kim", choice: ["D", "A"]},
+    {name: "Ben", choice: ["A", "D"]},
+    {name: "Amy", choice: ["B", "D"]},
+    {name: "Sam", choice: ["C", "A"]},
+    {name: "Eva", choice: ["D", "C"]},
 ]
 
-// every index from electionResults
-let notYetAssigned = electionResults.map((x, i) => i);
+let notYetAssigned = [];
 
 // {person: 0, option: "A"}
 let assigned = [
 ];
+
+let maxVotes = 0;
 
 let unluckyPersons = [];
 
@@ -37,9 +51,13 @@ for (let i = 0; i < options.length; i++) {
 // #################################
 
 function validate() {
+    // every index from electionResults
+    notYetAssigned = electionResults.map((x, i) => i);
+
 
     while (notYetAssigned.length > 0)
     {
+        console.log(notYetAssigned)
 
         let randomIndex = Math.floor(Math.random() * notYetAssigned.length);
         // get real index from electionResults
@@ -53,7 +71,6 @@ function validate() {
         let option = checkChoices(PersonChoice);
         if (option !== false) { // result could be index 0 instead of false
             moveToAssigned(randomPersonIndex, PersonChoice[option]);
-            console.log(notYetAssigned)
         } else // check for exchange loop
         {
             let result = false;
@@ -67,12 +84,17 @@ function validate() {
                     result = true;
                     break;
                 }
+                else
+                {
+                    console.log("No exchange loop found")
+                    result = false;
+                }
             }
 
             if (!result)
             {
                 // delete random person from notYetAssigned and move to seperate array
-                unluckyPersons.push(randomIndex);
+                unluckyPersons.push(randomPersonIndex);
                 notYetAssigned.splice(randomIndex, 1);
             } 
         }
@@ -92,6 +114,8 @@ function validate() {
             result.innerHTML += electionResults[persons[j].personIndex].name + "<br/>";
         }
         result.innerHTML += "<br/>";
+
+        console.log(assigned)
 
     }
 
@@ -154,11 +178,11 @@ function findExchangeLoop(exchanger, exchangerChoice, originalChoice) {
         
 }
 
-function moveToAssigned(index, option) {
-    assigned.push({"personIndex": index, "option": option});
+function moveToAssigned(personIndex, option) {
+    assigned.push({"personIndex": personIndex, "option": option});
     
     // delete from notYetAssigned where element is index
-    notYetAssigned.splice(notYetAssigned.indexOf(index), 1);
+    notYetAssigned.splice(notYetAssigned.indexOf(personIndex), 1);
 
     options.find(x => x.name == option).amount++;
 }
@@ -182,11 +206,9 @@ function lookupOption(optionName) {
     return option.amount;
 }
 
-function checkChoices (PersonChoice) {
-    let amountOfChoices = PersonChoice.length;
-
-    for (let i = 0; i < amountOfChoices; i++) {
-        if (lookupOption(PersonChoice[i]) < maxOptionSize) // If first choice is available
+function checkChoices (personChoices) {
+    for (let i = 0; i < personChoices.length; i++) {
+        if (lookupOption(personChoices[i]) < maxOptionSize) // If first choice is available
         {
             return i;
         }
@@ -194,7 +216,6 @@ function checkChoices (PersonChoice) {
 
     return false;
 }
-
 
 function addVote(e) {
     e.preventDefault();
@@ -221,6 +242,13 @@ function addVote(e) {
     if (primary == "---" || secondary == "---")
     {
         alert("Please select wishes!");
+        return;
+    }
+
+    // check if maximum amount of votes is reached
+    if (electionResults.length >= maxVotes)
+    {
+        alert("Maximum amount of votes reached!");
         return;
     }
 
@@ -267,10 +295,12 @@ function updateSettings(e) {
     }
 
     // reset votes
-    electionResults = [];
+    //electionResults = [];
     notYetAssigned = [];
     assigned = [];
     unluckyPersons = [];
+
+    maxVotes = groups.length * groupSize;
 
     // clear div "voters"
     document.getElementById("voters").innerHTML = "";
