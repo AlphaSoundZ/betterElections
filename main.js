@@ -1,35 +1,14 @@
 let result = document.getElementById("result");
-
 let options = [];
 let maxOptionSize = 2;
-
 let alreadyChecked = [];
-
-let electionResults = [
-    // example data with two choices from a to d
-    {name: "John", choice: ["A", "A"]},
-    {name: "Jane", choice: ["A", "A"]},
-    {name: "Max", choice: ["C", "D"]},
-    {name: "Mia", choice: ["D", "B"]},
-    {name: "Tom", choice: ["A", "B"]},
-    {name: "Liz", choice: ["B", "A"]},
-    {name: "Tim", choice: ["C", "A"]},
-    {name: "Kim", choice: ["D", "A"]},
-    {name: "Ben", choice: ["A", "D"]},
-    {name: "Amy", choice: ["B", "D"]},
-    {name: "Sam", choice: ["C", "A"]},
-    {name: "Eva", choice: ["D", "C"]},
-]
-
+let electionResults = []
 let notYetAssigned = [];
+let maxVotes = 0;
+let unluckyPersons = [];
 
 // {person: 0, option: "A"}
-let assigned = [
-];
-
-let maxVotes = 0;
-
-let unluckyPersons = [];
+let assigned = [];
 
 // #################################
 
@@ -47,7 +26,6 @@ for (let i = 0; i < options.length; i++) {
     secondary_wish.add(option2);
 }
 
-
 // #################################
 
 function validate() {
@@ -57,9 +35,9 @@ function validate() {
 
     while (notYetAssigned.length > 0)
     {
-        console.log(notYetAssigned)
-
         let randomIndex = Math.floor(Math.random() * notYetAssigned.length);
+        randomIndex = 0;
+        
         // get real index from electionResults
         let randomPersonIndex = notYetAssigned[randomIndex];
         let randomPerson = electionResults[randomPersonIndex];
@@ -114,9 +92,6 @@ function validate() {
             result.innerHTML += electionResults[persons[j].personIndex].name + "<br/>";
         }
         result.innerHTML += "<br/>";
-
-        console.log(assigned)
-
     }
 
     // show unlucky persons
@@ -140,42 +115,49 @@ function findExchangeLoop(exchanger, exchangerChoice, originalChoice) {
     // check if exchanger's choice is free
     if (lookupOption(exchangerChoice) < maxOptionSize)
     {
-        console.log("found!")
+        console.log("found!");
         changeAssignment(exchanger, exchangerChoice);
         return true;
     }
     
     // iterate through persons who are assigned to the exchanger's choice
-    let persons = assigned.filter(x => x.option == originalChoice);
+    let persons = assigned.filter(x => x.option == exchangerChoice);
 
     for (let i = 0; i < persons.length; i++) {
         let person = persons[i];
 
-        // person's other choices (without the exchanger's choice)
+        // person's other choices (without the exchanger's choice and the original choice)
         let personChoices = electionResults[person.personIndex].choice.filter(x => x != exchangerChoice && x != originalChoice);
 
-        for (let j = 0; j < personChoices.length; j++) { // iterate through person's choices (without the exchanger's choice)
-            // recursive call to check if the person can exchange
-            let option = checkChoices(personChoices);
-            if (option !== false) {
-                changeAssignment(person.personIndex, personChoices[option]);
-                return true;
-            } else
-            {
-                for (let k = 0; k < personChoices.length; k++) {
-                    if (findExchangeLoop(person.personIndex, personChoices[k], originalChoice))
-                    {
-                        changeAssignment(person.personIndex, personChoices[k]);
-                        return true;
-                    }
-                }
-            }
-        }
+        // recursive call to check if the person can exchange
+        let option = checkChoices(personChoices);
+        if (option !== false) {
+            // change assignment of person to change away from exchanger's choice
+            changeAssignment(person.personIndex, personChoices[option]);
 
-        return false;
+            // change assignment of exchanger to exchanger's choice (which is now free)
+            changeAssignment(exchanger, exchangerChoice);
+            return true;
+        }
     }
 
-        
+    for (let i = 0; i < persons.length; i++) {
+        let person = persons[i];
+
+        // person's other choices (without the exchanger's choice and the original choice)
+        let personChoices = electionResults[person.personIndex].choice.filter(x => x != exchangerChoice && x != originalChoice);
+
+        // recursive call to check if the person can exchange
+        for (let k = 0; k < personChoices.length; k++) {
+            if (findExchangeLoop(person.personIndex, personChoices[k], originalChoice))
+            {
+                changeAssignment(person.personIndex, personChoices[k]);
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 function moveToAssigned(personIndex, option) {
@@ -295,7 +277,7 @@ function updateSettings(e) {
     }
 
     // reset votes
-    //electionResults = [];
+    electionResults = [];
     notYetAssigned = [];
     assigned = [];
     unluckyPersons = [];
