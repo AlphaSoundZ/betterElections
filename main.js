@@ -1,6 +1,6 @@
 let result = document.getElementById("result");
 
-let options = [{"name": "A", "amount": 0}, {"name": "B", "amount": 0}, {"name": "C", "amount": 0}];
+let options = [];
 let maxOptionSize = 2;
 
 let alreadyChecked = [];
@@ -92,7 +92,11 @@ function validate() {
 
     }
 
-    console.log("Unlucky persons: " + unluckyPersons.length);
+    // show unlucky persons
+    result.innerHTML += "Unlucky voter: <br/>";
+    for (let i = 0; i < unluckyPersons.length; i++) {
+        result.innerHTML += electionResults[unluckyPersons[i]].name + "<br/>";
+    }
 }
 
 function findExchangeLoop(exchanger, exchangerChoice, originalChoice) {
@@ -232,4 +236,99 @@ function addVote(e) {
     document.getElementById("voters").appendChild(div);
 
     console.log(electionResults);
+}
+
+function updateSettings(e) {
+    e.preventDefault();
+
+    let groups = document.getElementById("groups").value;
+    let groupSize = document.getElementById("groupSize").value;
+
+    // split groups by comma
+    groups = groups.split(",");
+
+    // check if there are duplicate groups
+    if (new Set(groups).size !== groups.length)
+    {
+        alert("Duplicate groups!");
+        return;
+    }
+
+    // set vars
+    options = [];
+    maxOptionSize = groupSize;
+
+    // set options with amount of 0
+    for (let i = 0; i < groups.length; i++) {
+        options.push({ name: groups[i], amount: 0 });
+    }
+
+    // reset votes
+    electionResults = [];
+    notYetAssigned = [];
+    assigned = [];
+    unluckyPersons = [];
+
+    // clear div "voters"
+    document.getElementById("voters").innerHTML = "";
+
+    // clear div "result"
+    result.innerHTML = "";
+
+    // delete old option elements
+    let primary_wish = document.getElementById("primary_wish");
+    let secondary_wish = document.getElementById("secondary_wish");
+    primary_wish.innerHTML = "";
+    secondary_wish.innerHTML = "";
+
+    // add primary and secondary wish
+    let option = document.createElement("option");
+    option.text = "Primary Wish";
+    option.value = "---";
+    option.disabled = true;
+    option.selected = true;
+    primary_wish.add(option);
+
+    let option2 = document.createElement("option");
+    option2.text = "Secondary Wish";
+    option2.value = "---";
+    option2.disabled = true;
+    option2.selected = true;
+    secondary_wish.add(option2);
+
+    // add options to select
+
+    for (let i = 0; i < options.length; i++) {
+        let option = document.createElement("option");
+        option.text = options[i].name;
+        primary_wish.add(option);
+
+        let option2 = document.createElement("option");
+        option2.text = options[i].name;
+        secondary_wish.add(option2);
+    }
+
+    let saveButton = document.getElementById("saveButton");
+
+    // set save button title to saved for 2 seconds
+    saveButton.innerHTML = "Saved!";
+    setTimeout(() => {
+        saveButton.innerHTML = "Save";
+    }, 1000);
+
+}
+
+function undoVote() {
+    // check if there are votes
+    if (electionResults.length == 0)
+    {
+        return;
+    }
+    
+    // delete last entry in electionResults
+    electionResults.pop();
+
+    // delete last entry in voters div
+    let voters = document.getElementById("voters");
+    voters.removeChild(voters.lastChild);
 }

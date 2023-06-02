@@ -7,21 +7,35 @@
     <title>Better Elections!</title>
 </head>
 <body>
+    <h1>Better Elections!</h1>
+
+    <h2>Settings</h2>
+    <form action="" onsubmit="updateSettings(event);">
+        <input type="text" name="groups" placeholder="group1,group2,group3" id="groups" required >
+        <input type="number" placeholder="group size" min="1" name="groupSize" id="groupSize" required>
+        <button type="submit" id="saveButton">Save</button>
+    </form>
+    
+    <h2>Add Vote</h2>
     <form action="" onsubmit="addVote(event);">
         <input type="text" name="name" placeholder="Name" id="name" required>
         <select id="primary_wish" name="primary_wish" required>
             <option disabled selected value="---">Primary Wish</option>
         </select>
         <select id="secondary_wish" name="secondary_wish">
-            <option value="---" selected>Secondary Wish</option>
+            <option value="---" selected disabled>Secondary Wish</option>
         </select>
         <button type="submit">Add Voter</button>
+
+        <input type="button" value="Undo" onclick="undoVote()">
 
         <br><br>
     </form>
     <button type="submit" onclick="validate()">Calculate</button>
 
     <div id="result"></div>
+
+    <br><br>
 
     <div id="voters"></div>
 
