@@ -81,8 +81,11 @@ function validate() {
     // show results
     result.innerHTML = "";
     for (let i = 0; i < options.length; i++) {
-        result.innerHTML += options[i].name + ": " + options[i].amount + "<br/>";
-
+        // create h4 title
+        let h4 = document.createElement("h4");
+        h4.innerHTML = options[i].name + ": " + options[i].amount;
+        result.appendChild(h4);
+        
         // show persons
         let persons = assigned.filter(x => x.option == options[i].name);
         for (let j = 0; j < persons.length; j++) {
@@ -93,7 +96,7 @@ function validate() {
     }
 
     // show unlucky persons
-    result.innerHTML += "Unlucky voter: <br/>";
+    result.innerHTML += "Unlucky voters (" + unluckyPersons.length + "): <br/>";
     for (let i = 0; i < unluckyPersons.length; i++) {
         result.innerHTML += electionResults[unluckyPersons[i]].name + "<br/>";
     }
