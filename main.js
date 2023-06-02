@@ -7,7 +7,7 @@ let notYetAssigned = [];
 let maxVotes = 0;
 let unluckyPersons = [];
 
-// {person: 0, option: "A"}
+// {personIndex: 0, option: "A"}
 let assigned = [];
 
 // #################################
@@ -26,9 +26,25 @@ for (let i = 0; i < options.length; i++) {
     secondary_wish.add(option2);
 }
 
+
 // #################################
 
 function validate() {
+    // create electionResults test data (100 persons, 2 choices, 4 options)
+    /*for (let i = 0; i < 100; i++) {
+        let person = {
+            "name": "Person " + i,
+            "choice": []
+        }
+    
+        for (let j = 0; j < 2; j++) {
+            let randomOption = Math.floor(Math.random() * Math.random() * options.length);
+            person.choice.push(options[randomOption].name);
+        }
+    
+        electionResults.push(person);
+    }*/
+
     // every index from electionResults
     notYetAssigned = electionResults.map((x, i) => i);
 
@@ -36,7 +52,7 @@ function validate() {
     while (notYetAssigned.length > 0)
     {
         let randomIndex = Math.floor(Math.random() * notYetAssigned.length);
-        randomIndex = 0;
+        randomIndex = 0; // set this to chose first person instead of random
         
         // get real index from electionResults
         let randomPersonIndex = notYetAssigned[randomIndex];
@@ -89,7 +105,23 @@ function validate() {
         // show persons
         let persons = assigned.filter(x => x.option == options[i].name);
         for (let j = 0; j < persons.length; j++) {
-            result.innerHTML += electionResults[persons[j].personIndex].name + "<br/>";
+            
+            // change color depending on nth choice
+            let color = "black";
+            if (electionResults[persons[j].personIndex].choice[0] == options[i].name)
+            {
+                color = "green";
+            } else if (electionResults[persons[j].personIndex].choice[1] == options[i].name)
+            {
+                color = "orange";
+            }
+
+            // create span
+            let span = document.createElement("span");
+            span.innerHTML = electionResults[persons[j].personIndex].name;
+            span.style.color = color;
+            result.appendChild(span);
+            result.innerHTML += "<br>";
         }
         result.innerHTML += "<br/>";
     }
@@ -100,7 +132,6 @@ function validate() {
         result.innerHTML += electionResults[unluckyPersons[i]].name + "<br/>";
     }
 }
-
 function findExchangeLoop(exchanger, exchangerChoice, originalChoice) {
 
     // check if exchanger has already been checked
@@ -151,7 +182,6 @@ function findExchangeLoop(exchanger, exchangerChoice, originalChoice) {
         for (let k = 0; k < personChoices.length; k++) {
             if (findExchangeLoop(person.personIndex, personChoices[k], originalChoice))
             {
-                changeAssignment(person.personIndex, personChoices[k]);
                 return true;
             }
         }
@@ -167,10 +197,20 @@ function moveToAssigned(personIndex, option) {
     notYetAssigned.splice(notYetAssigned.indexOf(personIndex), 1);
 
     options.find(x => x.name == option).amount++;
+
+    console.log("Assigned " + electionResults[personIndex].name + " to " + option);
 }
 
 function changeAssignment(index, newOption) {
     let person = assigned.find(x => x.personIndex == index)
+
+    if (person == undefined)
+    {
+        moveToAssigned(index, newOption);
+        return;
+    }
+
+    console.log("Changed " + electionResults[index].name + " from " + person.option + " to " + newOption)
 
     // Remove from old option counter
     options.find(x => x.name == person.option).amount--;
@@ -247,8 +287,6 @@ function addVote(e) {
     let div = document.createElement("div");
     div.innerHTML = name + ": " + primary + ", " + secondary;
     document.getElementById("voters").appendChild(div);
-
-    console.log(electionResults);
 }
 
 function updateSettings(e) {
